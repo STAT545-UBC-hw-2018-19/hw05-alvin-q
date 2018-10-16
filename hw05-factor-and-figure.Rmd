@@ -7,5 +7,141 @@ editor_options:
 
 # Homework 05: Factor and figure management
 
+```{r}
+library(tidyverse)
+library(gapminder)
+library(knitr)
+```
+
 ## Part 1: Factor management
+
+### Elaboration for the gapminder data set
+
+Drop Oceania. Filter the Gapminder data to remove observations associated with the continent of Oceania. Additionally, remove unused factor levels. Provide concrete information on the data before and after removing these rows and Oceania; address the number of rows and the levels of the affected factors.
+
+```{r}
+str(gapminder)
+```
+
+We can see 132 levels in country and 5 levels in continent. There are 1704 rows in total.
+
+```{r}
+gap_filter <- gapminder%>%
+  filter(continent != "Oceania")
+
+str(gap_filter)
+
+levels(gap_filter$continent)
+```
+
+We can still see 142 levels in country and 5 levels in continent. So empty unused levels like "oceania" persist. However, there are 1680 rows in total.
+
+```{r}
+gap_filter %>%
+  droplevels() %>%
+  str()
+
+gap_filter$continent %>%
+  droplevels() %>%
+  levels()
+```
+
+After `droplevels`, we can see that the number of rows is still 1680. However, the unused factors are removed. There are only 140 levels in country and 4 levels in continent. Indeed "Oceania", which is unused, is removed.
+
+Reorder the levels of country or continent. Use the forcats package to change the order of the factor levels, based on a principled summary of one of the quantitative variables. Consider experimenting with a summary statistic beyond the most basic choice of the median.
+
+I'll look at Europe in 1952.
+
+```{r}
+gap_europe1952 <- gapminder %>%
+  filter(year == 1952, continent == "Europe")
+
+#Head the filtered file
+gap_europe1952 %>%
+  head(15) %>%
+  kable()
+```
+
+Note the alphabetical order.
+
+```{r}
+gap_europe1952 %>%
+  ggplot(aes(country, gdpPercap, fill = country)) +
+  geom_bar(stat = "identity", show.legend = FALSE) + #bar plot
+  coord_flip() + #flip X and y
+  theme_bw() #bw theme
+```
+
+We can see that the countries are ordered by alphabetical order still.
+
+Let's try `arrange`.
+
+```{r}
+gap_europe1952 %>%
+  arrange(gdpPercap) %>%
+  head(15) %>%
+  kable()
+```
+
+We can see that the table is arranged by gdpPerCap now.
+
+```{r}
+gap_europe1952 %>%
+  arrange(gdpPercap) %>%
+  ggplot(aes(country, gdpPercap, fill = country)) +
+  geom_bar(stat = "identity", show.legend = FALSE) + #bar plot
+  coord_flip() + #flip X and y
+  theme_bw() #bw theme
+```
+
+But arrange has no effect on plotting order. This is still alphabetical on ggplot.
+
+Let's try `fct_reorder`.
+
+```{r}
+gap_europe1952 %>%
+  mutate(country = fct_reorder(country, gdpPercap)) %>%
+  head(15) %>%
+  kable()
+```
+
+We can see that the table is not reordered with `fct_reorder`. It is still alphabetical order.
+
+```{r}
+gap_europe1952 %>%
+  mutate(country = fct_reorder(country, gdpPercap)) %>%
+  ggplot(aes(country, gdpPercap, fill = country)) +
+  geom_bar(stat = "identity", show.legend = FALSE) + #bar plot
+  coord_flip() + #flip X and y
+  theme_bw() #bw theme
+```
+
+However, the plot is reordered by gdpPerCap.
+
+So we need both `arrange` for the table and `fct_reorder` for the plot.
+
+```{r}
+gap_europe1952 %>%
+  arrange(gdpPercap) %>%
+  mutate(country = fct_reorder(country, gdpPercap)) %>%
+  head(15) %>%
+  kable()
+```
+
+Table is ordered by gdpPerCap...
+
+```{r}
+gap_europe1952 %>%
+  arrange(gdpPercap) %>%
+  mutate(country = fct_reorder(country, gdpPercap)) %>%
+  ggplot(aes(country, gdpPercap, fill = country)) +
+  geom_bar(stat = "identity", show.legend = FALSE) + #bar plot
+  coord_flip() + #flip X and y
+  theme_bw() #bw theme
+```
+
+...And the plot is reordered.
+
+## Part 2: File I/O
+
 
