@@ -144,4 +144,135 @@ gap_europe1952 %>%
 
 ## Part 2: File I/O
 
+Experiment with one or more of write_csv()/read_csv() (and/or TSV friends), saveRDS()/readRDS(), dput()/dget(). Create something new, probably by filtering or grouped-summarization of Singer or Gapminder. I highly recommend you fiddle with the factor levels, i.e. make them non-alphabetical (see previous section). Explore whether this survives the round trip of writing to file then reading back in.
+
+Explore the data first.
+```{r}
+#Filter the data
+gap_americas1997 <- gapminder %>%
+  filter(year == 1997, continent == "Americas")
+
+# Head data
+gap_americas1997 %>%
+  head(15) %>%
+  kable()
+```
+
+Look at the `str`.
+
+```{r}
+str(gapminder)
+
+str(gap_americas1997)
+```
+
+We can see that gapminder has 1704 row and the filtered data only has 25 rows. However, the levels are the same. This is because gap_americas1997 has unused levels.
+
+Let's look at I/O.
+
+```{r}
+# write the df
+gap_americas1997 %>%
+  write_csv("output/gap_americas1997_v1")
+
+#Read
+read_csv("output/gap_americas1997_v1") %>%
+  str()
+```
+
+We can see that after writing and reading the data, the levels are not maintained. This info is not stored in the written file.
+
+Let's try reordering now.
+
+```{r}
+gap_americas1997 %>%
+  mutate(country = fct_reorder(country, lifeExp)) %>% # reorder factor by lifeExp
+  str()
+```
+
+We can see that the factors for lifeExp are reordered.
+
+```{r}
+gap_americas1997 %>%
+  mutate(country = fct_reorder(country, lifeExp)) %>% # reorder factor by lifeExp
+  ggplot(aes(country, lifeExp)) +
+  geom_point() + #Scatter plot
+  coord_flip() + #flip X and y
+  theme_bw() #bw theme
+```
+
+So the plot is now ordered by lifeExp.
+
+Let's do another round of I/O
+
+```{r}
+# write the df
+gap_americas1997 %>%
+  mutate(country = fct_reorder(country, lifeExp)) %>%
+  write_csv("output/gap_americas1997_v2")
+
+#read
+read_csv("output/gap_americas1997_v2") %>%
+  str()
+```
+
+As we can see, after a round of I/O, nothing is maintained except that values themselves. We do not have any ordering of factors.
+
+```{r}
+read_csv("output/gap_americas1997_v2") %>%
+  ggplot(aes(country, lifeExp)) +
+  geom_point() + #Scatter plot
+  coord_flip() + #flip X and y
+  theme_bw() #bw theme
+```
+
+As expected, when we plot, this is back to alphabetical order.
+
+What if we want to write/read and maintain some order? We would use `arrange`.
+
+```{r}
+# Arrange
+gap_americas1997 %>%
+  arrange(lifeExp) %>%
+  head(15) %>%
+  kable()
+```
+
+We can see that the df is ordered by lifeExp here. Let's now output and input that.
+
+```{r}
+# Write the df
+gap_americas1997 %>%
+  arrange(lifeExp) %>%
+  write_csv("output/gap_americas1997_v3")
+
+# Read it back in
+read_csv("output/gap_americas1997_v3") %>% 
+  head(15) %>%
+  kable()
+```
+
+We can see that the arranged order by lifeExp is maintained.
+
+```{r}
+read_csv("output/gap_americas1997_v3") %>% 
+  ggplot(aes(country, lifeExp)) +
+  geom_point() + #Scatter plot
+  coord_flip() + #flip X and y
+  theme_bw() #bw theme
+```
+
+But when we plot, we are back to alphabetical order.
+
+```{r}
+read_csv("output/gap_americas1997_v3") %>% 
+  ggplot(aes(reorder(country, lifeExp), lifeExp)) +
+  geom_point() + #Scatter plot
+  coord_flip() + #flip X and y
+  theme_bw() #bw theme
+```
+
+We can use `reorder` since we do not have ordered levels here.
+
+## Part 3: Visualization design
 
