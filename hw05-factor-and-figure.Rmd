@@ -1,0 +1,11 @@
+---
+title: "Homework 05"
+output: github_document
+editor_options: 
+  chunk_output_type: console
+---
+
+# Homework 05: Factor and figure management
+
+## Part 1: Factor management
+
