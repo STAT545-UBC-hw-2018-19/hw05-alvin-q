@@ -746,3 +746,25 @@ Here is another `plotly`. I have 3 axes (X, Y and Z). I've added colour by conti
 
 Part 4: Writing figures to file
 -------------------------------
+
+``` r
+# Make plot
+plot <- gapminder %>%
+  ggplot(aes(x = year, y = lifeExp, color = country)) +
+  geom_line(lwd = 0.5, show.legend = FALSE) + 
+  facet_wrap(~ continent) +
+  theme_bw()
+
+ggsave("output/small_plot.png", plot, height = 4, width = 6) #save plot as png (4 x 6)
+
+ggsave("output/big_plot.png", plot, height = 8, width = 12) #save plot as png (8 x 12)
+
+ggsave("output/vector_plot.pdf", plot, height = 4, width = 6) #save plot pdf
+```
+
+Here I saved my plot as a raster (png) and vector (pdf). I've also done 2 different sizes:
+
+![4 x 6 png (small)](output/small_plot.png) ![8 x 12 png (small)](output/big_plot.png) ![PDF (vector) plot](output/vector_plot.pdf)
+
+But I want to do more!
+----------------------
