@@ -770,7 +770,9 @@ Here I saved my plot as a raster (png) and vector (pdf). I've also done 2 differ
 
 ### 8 x 12 png (small)
 
-![8 x 12 png (small)](output/big_plot.png) \#\#\# PDF (vector) plot
+![8 x 12 png (small)](output/big_plot.png)
+
+### PDF (vector) plot
 
 ![PDF (vector) plot](output/vector_plot.pdf)
 
