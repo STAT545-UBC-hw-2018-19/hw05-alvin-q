@@ -349,7 +349,7 @@ Then, make a new graph by converting this visual (or another, if you’d like) t
 
 I'll replot the first plot as a plotly.
 
-```{r}
+```{r, eval = FALSE}
 plot <- gapminder %>%
   filter(continent == "Asia") %>%
   ggplot(aes(x = lifeExp, y = gdpPercap, colour = year)) +
@@ -368,7 +368,7 @@ ggplotly(plot) #Convert to plotly
 
 With this `plotly`, I'm able to interact with the plot. For example, I can drag a box around a region and zoom in. Addtionally, I'm able to hover over points and see the exact values.
 
-```{r}
+```{r, eval = FALSE}
 gapminder %>%
   filter(year == 2007) %>%
   plot_ly(x = ~gdpPercap, 
