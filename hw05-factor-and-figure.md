@@ -727,6 +727,8 @@ plot <- gapminder %>%
 ggplotly(plot) #Convert to plotly
 ```
 
+![Plotly1](output/Plotly1.png)
+
 With this `plotly`, I'm able to interact with the plot. For example, I can drag a box around a region and zoom in. Addtionally, I'm able to hover over points and see the exact values.
 
 ``` r
@@ -741,6 +743,8 @@ gapminder %>%
   layout(scene = list(xaxis = list(type = "log"), #log x
                       zaxis = list(type = "log"))) #log z
 ```
+
+![Plotly2](output/Plotly2.png)
 
 Here is another `plotly`. I have 3 axes (X, Y and Z). I've added colour by continent. Also, I've log transformed 2 axes. I can also do orbital rotations here, which is useful.
 
@@ -768,9 +772,9 @@ Here I saved my plot as a raster (png) and vector (pdf). I've also done 2 differ
 
 ![4 x 6 png (small)](output/small_plot.png)
 
-### 8 x 12 png (small)
+### 8 x 12 png (big)
 
-![8 x 12 png (small)](output/big_plot.png)
+![8 x 12 png (big)](output/big_plot.png)
 
 ### PDF (vector) plot
 
