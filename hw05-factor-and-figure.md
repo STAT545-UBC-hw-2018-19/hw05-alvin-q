@@ -5,55 +5,12 @@ Homework 05: Factor and figure management
 =========================================
 
 ``` r
-library(tidyverse)
-```
-
-    ## -- Attaching packages ------------------------------------------------------------ tidyverse 1.2.1 --
-
-    ## v ggplot2 3.0.0     v purrr   0.2.5
-    ## v tibble  1.4.2     v dplyr   0.7.6
-    ## v tidyr   0.8.1     v stringr 1.3.1
-    ## v readr   1.1.1     v forcats 0.3.0
-
-    ## -- Conflicts --------------------------------------------------------------- tidyverse_conflicts() --
-    ## x dplyr::filter() masks stats::filter()
-    ## x dplyr::lag()    masks stats::lag()
-
-``` r
+suppressPackageStartupMessages(library(tidyverse))
 library(gapminder)
 library(knitr)
-library(scales)
+suppressPackageStartupMessages(library(scales))
+suppressPackageStartupMessages(library(plotly))
 ```
-
-    ## 
-    ## Attaching package: 'scales'
-
-    ## The following object is masked from 'package:purrr':
-    ## 
-    ##     discard
-
-    ## The following object is masked from 'package:readr':
-    ## 
-    ##     col_factor
-
-``` r
-library(plotly)
-```
-
-    ## 
-    ## Attaching package: 'plotly'
-
-    ## The following object is masked from 'package:ggplot2':
-    ## 
-    ##     last_plot
-
-    ## The following object is masked from 'package:stats':
-    ## 
-    ##     filter
-
-    ## The following object is masked from 'package:graphics':
-    ## 
-    ##     layout
 
 Part 1: Factor management
 -------------------------
@@ -727,6 +684,8 @@ plot <- gapminder %>%
 ggplotly(plot) #Convert to plotly
 ```
 
+Here is a screenshot of the `plotly`.
+
 ![Plotly1](output/Plotly1.png)
 
 With this `plotly`, I'm able to interact with the plot. For example, I can drag a box around a region and zoom in. Addtionally, I'm able to hover over points and see the exact values.
@@ -743,6 +702,8 @@ gapminder %>%
   layout(scene = list(xaxis = list(type = "log"), #log x
                       zaxis = list(type = "log"))) #log z
 ```
+
+Here is a screenshot of the `plotly`.
 
 ![Plotly2](output/Plotly2.png)
 
@@ -782,3 +743,37 @@ Here I saved my plot as a raster (png) and vector (pdf). I've also done 2 differ
 
 But I want to do more!
 ----------------------
+
+### Gapminder version
+
+Pick a handful of countries, each of which you can associate with a stereotypical food (or any other non-controversial thing … sport? hobby? type of music, art or dance? animal? landscape feature?). Create an excerpt of the Gapminder data, filtered to just these countries. Create a new factor – you pick the name! – by mapping the existing country factor levels to the new levels.
+
+First I'll filter a few countries.
+
+``` r
+gap_flower <- gapminder %>% 
+  filter(country %in% c("Belgium", "Croatia", "Guatemala", "Japan", "Portugal", "Uruguay")) %>% 
+  droplevels() #drop un used levels
+
+levels(gap_flower$country)
+```
+
+    ## [1] "Belgium"   "Croatia"   "Guatemala" "Japan"     "Portugal"  "Uruguay"
+
+Now, I'll use `fct_recode` to change these factors to the national flower.
+
+``` r
+gap_flower$country %>% 
+  fct_recode("Red_Poppy" = "Belgium",
+             "Iris_Croatica" = "Croatia",
+             "White_Nun_Orchid" = "Guatemala",
+             "Chrysanthemum" = "Japan",
+             "Lavender" = "Portugal",
+             "Ceibo_Erythrina" = "Uruguay") %>% 
+  levels()
+```
+
+    ## [1] "Red_Poppy"        "Iris_Croatica"    "White_Nun_Orchid"
+    ## [4] "Chrysanthemum"    "Lavender"         "Ceibo_Erythrina"
+
+We can see now that the levels are renamed now to the national flower.

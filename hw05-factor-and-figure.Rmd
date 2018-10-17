@@ -9,11 +9,11 @@ editor_options:
 # Homework 05: Factor and figure management
 
 ```{r}
-library(tidyverse)
+suppressPackageStartupMessages(library(tidyverse))
 library(gapminder)
 library(knitr)
-library(scales)
-library(plotly)
+suppressPackageStartupMessages(library(scales))
+suppressPackageStartupMessages(library(plotly))
 ```
 
 ## Part 1: Factor management
@@ -366,6 +366,8 @@ plot <- gapminder %>%
 ggplotly(plot) #Convert to plotly
 ```
 
+Here is a screenshot of the `plotly`.
+
 ![Plotly1](output/Plotly1.png)
 
 With this `plotly`, I'm able to interact with the plot. For example, I can drag a box around a region and zoom in. Addtionally, I'm able to hover over points and see the exact values.
@@ -382,6 +384,8 @@ gapminder %>%
   layout(scene = list(xaxis = list(type = "log"), #log x
                       zaxis = list(type = "log"))) #log z
 ```
+
+Here is a screenshot of the `plotly`.
 
 ![Plotly2](output/Plotly2.png)
 
@@ -419,3 +423,32 @@ Here I saved my plot as a raster (png) and vector (pdf). I've also done 2 differ
 ![PDF (vector) plot](output/vector_plot.pdf)
 
 ## But I want to do more!
+
+### Gapminder version
+
+Pick a handful of countries, each of which you can associate with a stereotypical food (or any other non-controversial thing … sport? hobby? type of music, art or dance? animal? landscape feature?). Create an excerpt of the Gapminder data, filtered to just these countries. Create a new factor – you pick the name! – by mapping the existing country factor levels to the new levels.
+
+First I'll filter a few countries.
+
+```{r}
+gap_flower <- gapminder %>% 
+  filter(country %in% c("Belgium", "Croatia", "Guatemala", "Japan", "Portugal", "Uruguay")) %>% 
+  droplevels() #drop un used levels
+
+levels(gap_flower$country)
+```
+
+Now, I'll use `fct_recode` to change these factors to the national flower.
+
+```{r}
+gap_flower$country %>% 
+  fct_recode("Red_Poppy" = "Belgium",
+             "Iris_Croatica" = "Croatia",
+             "White_Nun_Orchid" = "Guatemala",
+             "Chrysanthemum" = "Japan",
+             "Lavender" = "Portugal",
+             "Ceibo_Erythrina" = "Uruguay") %>% 
+  levels()
+```
+
+We can see now that the levels are renamed now to the national flower.
