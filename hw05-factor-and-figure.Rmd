@@ -1,6 +1,7 @@
 ---
 title: "Homework 05"
 output: github_document
+always_allow_html: yes
 editor_options: 
   chunk_output_type: console
 ---
@@ -11,6 +12,8 @@ editor_options:
 library(tidyverse)
 library(gapminder)
 library(knitr)
+library(scales)
+library(plotly)
 ```
 
 ## Part 1: Factor management
@@ -275,4 +278,110 @@ read_csv("output/gap_americas1997_v3") %>%
 We can use `reorder` since we do not have ordered levels here.
 
 ## Part 3: Visualization design
+
+Remake at least one figure or create a new one, in light of something you learned in the recent class meetings about visualization design and color. Maybe juxtapose your first attempt and what you obtained after some time spent working on it. Reflect on the differences. If using Gapminder, you can use the country or continent color scheme that ships with Gapminder. Consult the dimensions listed in All the Graph Things.
+
+I'll be replotting some of my plots from previous assignments.
+
+OLD:
+
+```{r}
+gapminder %>%
+  filter(continent == "Asia") %>%
+  ggplot(aes(x = lifeExp, y = gdpPercap, colour = year)) +
+  geom_point() +
+  scale_y_log10()
+```
+
+NEW:
+
+```{r}
+gapminder %>%
+  filter(continent == "Asia") %>%
+  ggplot(aes(x = lifeExp, y = gdpPercap, colour = year)) +
+  geom_point() +
+  scale_y_continuous(
+    label=dollar_format(), # add $ format
+    trans  = "log10") + #y axis on log scale
+  scale_color_distiller(
+    palette = "Oranges") + #Orange palette
+  theme_bw() + # change theme
+  ylab("GDP per capita") + # change title on Y axis
+  xlab("Life Expectancy") #change title on X axis
+```
+
+So here, I've re-plotted a scatterplot from HW02. I've changed the theme, the color scale, the titles on the axes, added a dollar format, and transformed the Y axis to a log10 scale.
+
+Here is another plot.
+
+OLD:
+
+```{r}
+ggplot(gapminder, aes(x = continent, y = pop)) +
+  scale_y_log10() +
+  geom_violin(aes(fill = continent), show.legend = FALSE) +
+  geom_jitter(alpha = 0.2)
+```
+
+NEW:
+
+```{r}
+ggplot(gapminder, aes(x = continent, y = pop)) +
+  geom_violin(show.legend = FALSE, aes(fill = continent)) +
+  geom_jitter(alpha = 0.2) +
+  scale_y_continuous(
+    label=comma_format(), # add comma format
+    trans = "log10", #y axis on log scale
+    breaks = 10^(1:10)) + # log 10 y scale
+  scale_fill_brewer(
+    palette = "Dark2") + #change fill 
+  theme_bw() + #change theme to bw
+  theme(
+    axis.text = element_text(size = 14), #change size of axis labels
+    axis.title = element_text(size = 16)) + #change size of axis text
+  ylab("Population") + # Add Y label
+  xlab("Continent") # Add X label
+```
+
+Here I've replotted the same violin and jitter. However, I added a comma format on the Y axis, changed the breaks, transformed to log10, changed the fill colour to "Dark2", changed the theme, increased the font size on the axis labels and titles, and changed the titles on the axes.
+
+Then, make a new graph by converting this visual (or another, if you’d like) to a plotly graph. What are some things that plotly makes possible, that are not possible with a regular ggplot2 graph?
+
+I'll replot the first plot as a plotly.
+
+```{r}
+plot <- gapminder %>%
+  filter(continent == "Asia") %>%
+  ggplot(aes(x = lifeExp, y = gdpPercap, colour = year)) +
+  geom_point() +
+  scale_y_continuous(
+    label=dollar_format(), # add $ format
+    trans  = "log10") + #y axis on log scale
+  scale_color_distiller(
+    palette = "Oranges") + #Orange palette
+  theme_bw() + # change theme
+  ylab("GDP per capita") + # change title on Y axis
+  xlab("Life Expectancy") #change title on X axis
+
+ggplotly(plot) #Convert to plotly
+```
+
+With this `plotly`, I'm able to interact with the plot. For example, I can drag a box around a region and zoom in. Addtionally, I'm able to hover over points and see the exact values.
+
+```{r}
+gapminder %>%
+  filter(year == 2007) %>%
+  plot_ly(x = ~gdpPercap, 
+        y = ~lifeExp, 
+        z = ~pop,
+        color = ~continent, #colour by continent
+        type = "scatter3d",
+        mode = "markers") %>%
+  layout(scene = list(xaxis = list(type = "log"), #log x
+                      zaxis = list(type = "log"))) #log z
+```
+
+Here is another `plotly`. I have 3 axes (X, Y and Z). I've added colour by continent. Also, I've log transformed 2 axes. I can also do orbital rotations here, which is useful.
+
+## Part 4: Writing figures to file
 
